@@ -1,0 +1,7 @@
+*.h5ad
+
+mixscape copy.ipynb
+mixscape.ipynb
+
+data
+__pycache__
