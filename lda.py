@@ -181,35 +181,8 @@ class LDA:
         return self
 
     def _solve_eigen(self, X, y, shrinkage=None, covariance_estimator=None):
-        start = time()
-        # self.means_ = _class_means(X, y)
-        # if isinstance(X, ndarray):
-        #     self.covariance_ = _class_cov(
-        #         X, y, self.priors_, shrinkage, covariance_estimator
-        #     )
-        #     Sw = self.covariance_  # within scatter
-        #     St = _cov(X, shrinkage, covariance_estimator)  # total scatter
-        # else:
-        #     self.covariance_ = _class_cov(
-        #         X.toarray(), y, self.priors_, shrinkage, covariance_estimator
-        #     )
-        #     Sw = self.covariance_  # within scatter
-        #     St = _cov(X.toarray(), shrinkage, covariance_estimator)  # total scatter
-        # Sb = St - Sw  # between scatter
         Sw, Sb = compute_scatter_matrices(X, y)
-        end = time()
-        
-        print(f"Compute between and within class cost {end-start}")
-        start = time()
         evals, evecs = find_k_largest_eigenvalues(np.linalg.inv(Sw).dot(Sb), self._max_components)
-        end = time()
-        print(f"Compute eigen cost {end-start}")
-        
-        self.explained_variance_ratio_ = np.sort(evals / np.sum(evals))[::-1][
-            : self._max_components
-        ]
-        evecs = evecs[:, np.argsort(evals)[::-1]]  # sort eigenvectors
-
         self.scalings_ = evecs
 
     def transform(self, X):
